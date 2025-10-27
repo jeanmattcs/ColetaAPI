@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using ColetaAPI.Service.ColetaService;
+using ColetaAPI.Service.LocalizacaoService;
 using ColetaAPI.DataContext;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IColetaInterface, ColetaService>();
+builder.Services.AddScoped<ILocalizacaoInterface, LocalizacaoService>();
 
 // Conexao com o SQL Server.
 builder.Services.AddDbContext<ApplicationsDbContext>(options =>

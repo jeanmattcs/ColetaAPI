@@ -11,7 +11,18 @@ namespace ColetaAPI.DataContext
         {
         }
 
-
+        public DbSet<LocalizacaoModel> Localizacoes { get; set; }
         public DbSet<ColetaModel> Coletas { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ColetaModel>()
+                .HasOne(c => c.Localizacao)
+                .WithMany(l => l.Coletas)
+                .HasForeignKey(c => c.LocalizacaoId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }

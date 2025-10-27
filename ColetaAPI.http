@@ -1,6 +1,53 @@
-@ColetaAPI_HostAddress = http://localhost:5016
+@ColetaAPI_HostAddress = https://localhost:7116
 
-GET {{ColetaAPI_HostAddress}}/weatherforecast/
+POST {{ColetaAPI_HostAddress}}/api/Localizacao/Add
+Content-Type: application/json
+
+{
+  "descricao": "Rua dos guardas chuvas"
+}
+
+GET {{ColetaAPI_HostAddress}}/api/Localizacao/GetAll
 Accept: application/json
 
-###
+GET {{ColetaAPI_HostAddress}}/api/Localizacao/GetById/1
+Accept: application/json
+
+PUT {{ColetaAPI_HostAddress}}/api/Localizacao/Update
+Content-Type: application/json
+
+{
+  "id": 1,
+  "descricao": "Rua dos guarda chuva"
+}
+
+DELETE {{ColetaAPI_HostAddress}}/api/Localizacao/Delete/1
+Accept: application/json
+
+POST {{ColetaAPI_HostAddress}}/api/Coleta/Add
+Content-Type: application/json
+
+{
+  "localizacaoId": 1,
+  "orderDate": "2025-10-26T10:30:00",
+  "collected": false
+}
+
+GET {{ColetaAPI_HostAddress}}/api/Coleta/GetAll
+Accept: application/json
+
+GET {{ColetaAPI_HostAddress}}/api/Coleta/GetSingle/1
+Accept: application/json
+
+PUT {{ColetaAPI_HostAddress}}/api/Coleta/Update
+Content-Type: application/json
+
+{
+  "id": 1,
+  "localizacaoId": 1,
+  "orderDate": "2025-10-26T10:30:00",
+  "collected": true
+}
+
+DELETE {{ColetaAPI_HostAddress}}/api/Coleta/Delete/1
+Accept: application/json

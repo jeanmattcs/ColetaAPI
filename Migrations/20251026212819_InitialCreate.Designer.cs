@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ColetaAPI.Migrations
 {
     [DbContext(typeof(ApplicationsDbContext))]
-    [Migration("20250927195523_first-Migration")]
-    partial class firstMigration
+    [Migration("20251026212819_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,16 +39,54 @@ namespace ColetaAPI.Migrations
                     b.Property<DateTime>("DateOfCreation")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Local")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("LocalizacaoId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ID");
 
+                    b.HasIndex("LocalizacaoId");
+
                     b.ToTable("Coletas");
+                });
+
+            modelBuilder.Entity("ColetaAPI.Models.LocalizacaoModel", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("DateOfCreation")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Localizacoes");
+                });
+
+            modelBuilder.Entity("ColetaAPI.Models.ColetaModel", b =>
+                {
+                    b.HasOne("ColetaAPI.Models.LocalizacaoModel", "Localizacao")
+                        .WithMany("Coletas")
+                        .HasForeignKey("LocalizacaoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Localizacao");
+                });
+
+            modelBuilder.Entity("ColetaAPI.Models.LocalizacaoModel", b =>
+                {
+                    b.Navigation("Coletas");
                 });
 #pragma warning restore 612, 618
         }

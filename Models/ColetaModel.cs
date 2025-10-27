@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ColetaAPI.Models
 {
@@ -6,9 +7,13 @@ namespace ColetaAPI.Models
     {
         [Key]
         public int ID { get; set; }
-        public string Local { get; set; }
+
+        [Required(ErrorMessage = "LocalizacaoId é obrigatório")]
+        [ForeignKey("Localizacao")]
+        public int LocalizacaoId { get; set; }
         public DateTime OrderDate { get; set; }
         public bool Collected { get; set; } = false;
         public DateTime DateOfCreation { get; set; } = DateTime.Now.ToLocalTime();
+        public LocalizacaoModel Localizacao { get; set; }
     }
 }

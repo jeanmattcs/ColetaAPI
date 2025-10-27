@@ -22,18 +22,28 @@ namespace ColetaAPI.Service.ColetaService
             ServiceResponse<List<ColetaModel>> ServiceResponse = new ServiceResponse<List<ColetaModel>>();
             try
             {
-                if (coleta.Local == null)
+                if (coleta.LocalizacaoId <= 0)
                 {
                     ServiceResponse.Data = null;
-                    ServiceResponse.Message = "Local é obrigatório";
+                    ServiceResponse.Message = "LocalizacaoId é obrigatório e deve ser válido";
                     ServiceResponse.Success = false;
-
                     return ServiceResponse;
                 }
+
+                // Validar se a localização existe
+                var localizacaoExiste = await _context.Localizacoes.AnyAsync(l => l.ID == coleta.LocalizacaoId);
+                if (!localizacaoExiste)
+                {
+                    ServiceResponse.Data = null;
+                    ServiceResponse.Message = $"Localização com ID {coleta.LocalizacaoId} não existe";
+                    ServiceResponse.Success = false;
+                    return ServiceResponse;
+                }
+
                 _context.Add(coleta);
                 await _context.SaveChangesAsync();
-                ServiceResponse.Data = await _context.Coletas.ToListAsync();
-                ServiceResponse.Message = "Coleta adicionada";
+                ServiceResponse.Data = await _context.Coletas.Include(c => c.Localizacao).ToListAsync();
+                ServiceResponse.Message = "Coleta adicionada com sucesso";
             }
             catch (Exception ex)
             {
@@ -48,7 +58,7 @@ namespace ColetaAPI.Service.ColetaService
             ServiceResponse<List<ColetaModel>> ServiceResponse = new ServiceResponse<List<ColetaModel>>();
             try
             {
-                ServiceResponse.Data = await _context.Coletas.ToListAsync();
+                ServiceResponse.Data = await _context.Coletas.Include(c => c.Localizacao).ToListAsync();
                 if (ServiceResponse.Data.Any())
                 {
                     ServiceResponse.Message = "Coletas encontradas";
@@ -71,15 +81,18 @@ namespace ColetaAPI.Service.ColetaService
             ServiceResponse<ColetaModel> ServiceResponse = new ServiceResponse<ColetaModel>();
             try
             {
-                ColetaModel coletas = _context.Coletas.FirstOrDefault(c => c.ID == id);
+                ColetaModel coletas = _context.Coletas.Include(c => c.Localizacao).FirstOrDefault(c => c.ID == id);
 
                 if (coletas == null)
                 {
                     ServiceResponse.Message = "Coleta não encontrada";
                     ServiceResponse.Success = false;
                 }
-                ServiceResponse.Data = coletas;
-                ServiceResponse.Message = "Coleta encontrada";
+                else
+                {
+                    ServiceResponse.Data = coletas;
+                    ServiceResponse.Message = "Coleta encontrada";
+                }
             }
             catch (Exception ex)
             {
@@ -94,10 +107,28 @@ namespace ColetaAPI.Service.ColetaService
             ServiceResponse<ColetaModel> ServiceResponse = new ServiceResponse<ColetaModel>();
             try
             {
+                if (coleta.LocalizacaoId <= 0)
+                {
+                    ServiceResponse.Data = null;
+                    ServiceResponse.Message = "LocalizacaoId é obrigatório e deve ser válido";
+                    ServiceResponse.Success = false;
+                    return ServiceResponse;
+                }
+
+                // Validar se a localização existe
+                var localizacaoExiste = await _context.Localizacoes.AnyAsync(l => l.ID == coleta.LocalizacaoId);
+                if (!localizacaoExiste)
+                {
+                    ServiceResponse.Data = null;
+                    ServiceResponse.Message = $"Localização com ID {coleta.LocalizacaoId} não existe";
+                    ServiceResponse.Success = false;
+                    return ServiceResponse;
+                }
+
                 _context.Update(coleta);
                 await _context.SaveChangesAsync();
                 ServiceResponse.Data = coleta;
-                ServiceResponse.Message = "Coleta atualizada";
+                ServiceResponse.Message = "Coleta atualizada com sucesso";
             }
             catch (Exception ex)
             {
@@ -117,11 +148,12 @@ namespace ColetaAPI.Service.ColetaService
                 {
                     ServiceResponse.Message = "Coleta não encontrada";
                     ServiceResponse.Success = false;
+                    return ServiceResponse;
                 }
                 _context.Coletas.Remove(coleta);
                 await _context.SaveChangesAsync();
-                ServiceResponse.Data = await _context.Coletas.ToListAsync();
-                ServiceResponse.Message = "Coleta deletada.";
+                ServiceResponse.Data = await _context.Coletas.Include(c => c.Localizacao).ToListAsync();
+                ServiceResponse.Message = "Coleta deletada com sucesso";
             }
             catch (Exception ex)
             {

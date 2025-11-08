@@ -1,3 +1,4 @@
+using ColetaAPI.DTOs;
 using ColetaAPI.Models;
 using ColetaAPI.Service.LocalizacaoService;
 using Microsoft.AspNetCore.Http;
@@ -29,14 +30,23 @@ namespace ColetaAPI.Controllers
         }
 
         [HttpPost("Add")]
-        public async Task<ActionResult<ServiceResponse<List<LocalizacaoModel>>>> AddLocalizacao(LocalizacaoModel localizacao)
+        public async Task<ActionResult<ServiceResponse<List<LocalizacaoModel>>>> AddLocalizacao(CreateLocalizacaoDto dto)
         {
+            var localizacao = new LocalizacaoModel
+            {
+                Descricao = dto.Descricao
+            };
             return Ok(await _localizacaoInterface.AddLocalizacao(localizacao));
         }
 
         [HttpPut("Update")]
-        public async Task<ActionResult<ServiceResponse<LocalizacaoModel>>> UpdateLocalizacao(LocalizacaoModel localizacao)
+        public async Task<ActionResult<ServiceResponse<LocalizacaoModel>>> UpdateLocalizacao(UpdateLocalizacaoDto dto)
         {
+            var localizacao = new LocalizacaoModel
+            {
+                ID = dto.Id,
+                Descricao = dto.Descricao
+            };
             return Ok(await _localizacaoInterface.UpdateLocalizacao(localizacao));
         }
 
@@ -47,4 +57,5 @@ namespace ColetaAPI.Controllers
         }
     }
 }
+
 

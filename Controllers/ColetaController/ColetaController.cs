@@ -1,4 +1,5 @@
-﻿using ColetaAPI.Models;
+using ColetaAPI.DTOs;
+using ColetaAPI.Models;
 using ColetaAPI.Service.ColetaService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,13 +26,26 @@ namespace ColetaAPI.Controllers
             return Ok(await _coletaInterface.GetSingleColeta(id));
         }
         [HttpPost("Add")]
-        public async Task<ActionResult<ServiceResponse<List<ColetaModel>>>> AddColeta(ColetaModel coleta)
+        public async Task<ActionResult<ServiceResponse<List<ColetaModel>>>> AddColeta(CreateColetaDto dto)
         {
+            var coleta = new ColetaModel
+            {
+                LocalizacaoId = dto.LocalizacaoId,
+                OrderDate = dto.OrderDate,
+                Collected = dto.Collected
+            };
             return Ok(await _coletaInterface.AddColeta(coleta));
         }
         [HttpPut("Update")]
-        public async Task<ActionResult<ServiceResponse<ColetaModel>>> UpdateColeta(ColetaModel coleta)
+        public async Task<ActionResult<ServiceResponse<ColetaModel>>> UpdateColeta(UpdateColetaDto dto)
         {
+            var coleta = new ColetaModel
+            {
+                ID = dto.Id,
+                LocalizacaoId = dto.LocalizacaoId,
+                OrderDate = dto.OrderDate,
+                Collected = dto.Collected
+            };
             return Ok(await _coletaInterface.UpdateColeta(coleta));
         }
         [HttpDelete("Delete/{id}")]
@@ -41,3 +55,4 @@ namespace ColetaAPI.Controllers
         }
     }
 }
+

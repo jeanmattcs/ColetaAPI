@@ -48,7 +48,9 @@ namespace ColetaAPI.Service.LocalizacaoService
             ServiceResponse<List<LocalizacaoModel>> serviceResponse = new ServiceResponse<List<LocalizacaoModel>>();
             try
             {
-                serviceResponse.Data = await _context.Localizacoes.ToListAsync();
+                serviceResponse.Data = await _context.Localizacoes
+                    .Include(l => l.Coletas)
+                    .ToListAsync();
                 if (serviceResponse.Data.Any())
                 {
                     serviceResponse.Message = "Localizações encontradas";
@@ -72,7 +74,9 @@ namespace ColetaAPI.Service.LocalizacaoService
             ServiceResponse<LocalizacaoModel> serviceResponse = new ServiceResponse<LocalizacaoModel>();
             try
             {
-                LocalizacaoModel localizacao = _context.Localizacoes.FirstOrDefault(l => l.ID == id);
+                LocalizacaoModel localizacao = await _context.Localizacoes
+                    .Include(l => l.Coletas)
+                    .FirstOrDefaultAsync(l => l.ID == id);
 
                 if (localizacao == null)
                 {

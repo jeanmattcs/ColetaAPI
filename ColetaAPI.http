@@ -1,5 +1,11 @@
 @ColetaAPI_HostAddress = https://localhost:7116
 
+### BUSCAR TODOS OS DADOS DO BANCO DE DADOS (LOCALIZAÇÕES + COLETAS)
+GET {{ColetaAPI_HostAddress}}/api/Database/GetAll
+Accept: application/json
+
+###
+
 POST {{ColetaAPI_HostAddress}}/api/Localizacao/Add
 Content-Type: application/json
 

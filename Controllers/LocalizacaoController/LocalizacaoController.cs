@@ -18,19 +18,19 @@ namespace ColetaAPI.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<ServiceResponse<List<LocalizacaoModel>>>> GetLocalizacoes()
+        public async Task<ActionResult<ServiceResponse<List<LocalizacaoResponseDto>>>> GetLocalizacoes()
         {
             return Ok(await _localizacaoInterface.GetLocalizacoes());
         }
 
         [HttpGet("GetById/{id}")]
-        public async Task<ActionResult<ServiceResponse<LocalizacaoModel>>> GetLocalizacaoById(int id)
+        public async Task<ActionResult<ServiceResponse<LocalizacaoResponseDto>>> GetLocalizacaoById(int id)
         {
             return Ok(await _localizacaoInterface.GetLocalizacaoById(id));
         }
 
         [HttpPost("Add")]
-        public async Task<ActionResult<ServiceResponse<List<LocalizacaoModel>>>> AddLocalizacao(CreateLocalizacaoDto dto)
+        public async Task<ActionResult<ServiceResponse<List<LocalizacaoResponseDto>>>> AddLocalizacao(CreateLocalizacaoDto dto)
         {
             var localizacao = new LocalizacaoModel
             {
@@ -40,7 +40,7 @@ namespace ColetaAPI.Controllers
         }
 
         [HttpPut("Update")]
-        public async Task<ActionResult<ServiceResponse<LocalizacaoModel>>> UpdateLocalizacao(UpdateLocalizacaoDto dto)
+        public async Task<ActionResult<ServiceResponse<LocalizacaoResponseDto>>> UpdateLocalizacao(UpdateLocalizacaoDto dto)
         {
             var localizacao = new LocalizacaoModel
             {
@@ -51,7 +51,7 @@ namespace ColetaAPI.Controllers
         }
 
         [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult<ServiceResponse<List<LocalizacaoModel>>>> DeleteLocalizacao(int id)
+        public async Task<ActionResult<ServiceResponse<List<LocalizacaoResponseDto>>>> DeleteLocalizacao(int id)
         {
             return Ok(await _localizacaoInterface.DeleteLocalizacao(id));
         }

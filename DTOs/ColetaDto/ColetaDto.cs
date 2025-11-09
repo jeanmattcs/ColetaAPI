@@ -26,6 +26,23 @@ namespace ColetaAPI.DTOs
 
         public bool Collected { get; set; }
     }
+
+    public class ColetaResponseDto
+    {
+        public int Id { get; set; }
+        public int LocalizacaoId { get; set; }
+        public DateTime OrderDate { get; set; }
+        public bool Collected { get; set; }
+        public DateTime DateOfCreation { get; set; }
+        public LocalizacaoSimpleDto? Localizacao { get; set; }
+    }
+
+    public class LocalizacaoSimpleDto
+    {
+        public int Id { get; set; }
+        public string Descricao { get; set; } = string.Empty;
+        public DateTime DateOfCreation { get; set; }
+    }
 }
 
 

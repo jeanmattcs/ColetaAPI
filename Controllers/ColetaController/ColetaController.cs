@@ -16,17 +16,17 @@ namespace ColetaAPI.Controllers
             _coletaInterface = coletaInterface;
         }
         [HttpGet("GetAll")]
-        public async Task<ActionResult<ServiceResponse<List<ColetaModel>>>> GetColeta()
+        public async Task<ActionResult<ServiceResponse<List<ColetaResponseDto>>>> GetColeta()
         {
             return Ok(await _coletaInterface.GetColeta());
         }
         [HttpGet("GetSingle/{id}")]
-        public async Task<ActionResult<ServiceResponse<ColetaModel>>> GetSingleColeta(int id)
+        public async Task<ActionResult<ServiceResponse<ColetaResponseDto>>> GetSingleColeta(int id)
         {
             return Ok(await _coletaInterface.GetSingleColeta(id));
         }
         [HttpPost("Add")]
-        public async Task<ActionResult<ServiceResponse<List<ColetaModel>>>> AddColeta(CreateColetaDto dto)
+        public async Task<ActionResult<ServiceResponse<List<ColetaResponseDto>>>> AddColeta(CreateColetaDto dto)
         {
             var coleta = new ColetaModel
             {
@@ -37,7 +37,7 @@ namespace ColetaAPI.Controllers
             return Ok(await _coletaInterface.AddColeta(coleta));
         }
         [HttpPut("Update")]
-        public async Task<ActionResult<ServiceResponse<ColetaModel>>> UpdateColeta(UpdateColetaDto dto)
+        public async Task<ActionResult<ServiceResponse<ColetaResponseDto>>> UpdateColeta(UpdateColetaDto dto)
         {
             var coleta = new ColetaModel
             {
@@ -49,7 +49,7 @@ namespace ColetaAPI.Controllers
             return Ok(await _coletaInterface.UpdateColeta(coleta));
         }
         [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult<ServiceResponse<List<ColetaModel>>>> DeleteColeta(int id)
+        public async Task<ActionResult<ServiceResponse<List<ColetaResponseDto>>>> DeleteColeta(int id)
         {
             return Ok(await _coletaInterface.DeleteColeta(id));
         }

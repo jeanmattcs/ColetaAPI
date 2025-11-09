@@ -1,4 +1,5 @@
 ﻿using ColetaAPI.DataContext;
+using ColetaAPI.DTOs;
 using ColetaAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -16,10 +17,29 @@ namespace ColetaAPI.Service.ColetaService
         {
             _context = context;
         }
-        // Adicionar Coleta
-        public async Task<ServiceResponse<List<ColetaModel>>> AddColeta(ColetaModel coleta)
+
+        // Método auxiliar para mapear ColetaModel para ColetaResponseDto
+        private ColetaResponseDto MapToResponseDto(ColetaModel coleta)
         {
-            ServiceResponse<List<ColetaModel>> ServiceResponse = new ServiceResponse<List<ColetaModel>>();
+            return new ColetaResponseDto
+            {
+                Id = coleta.ID,
+                LocalizacaoId = coleta.LocalizacaoId,
+                OrderDate = coleta.OrderDate,
+                Collected = coleta.Collected,
+                DateOfCreation = coleta.DateOfCreation,
+                Localizacao = coleta.Localizacao != null ? new LocalizacaoSimpleDto
+                {
+                    Id = coleta.Localizacao.ID,
+                    Descricao = coleta.Localizacao.Descricao,
+                    DateOfCreation = coleta.Localizacao.DateOfCreation
+                } : null
+            };
+        }
+        // Adicionar Coleta
+        public async Task<ServiceResponse<List<ColetaResponseDto>>> AddColeta(ColetaModel coleta)
+        {
+            ServiceResponse<List<ColetaResponseDto>> ServiceResponse = new ServiceResponse<List<ColetaResponseDto>>();
             try
             {
                 if (coleta.LocalizacaoId <= 0)
@@ -42,7 +62,9 @@ namespace ColetaAPI.Service.ColetaService
 
                 _context.Add(coleta);
                 await _context.SaveChangesAsync();
-                ServiceResponse.Data = await _context.Coletas.Include(c => c.Localizacao).ToListAsync();
+
+                var coletas = await _context.Coletas.Include(c => c.Localizacao).ToListAsync();
+                ServiceResponse.Data = coletas.Select(c => MapToResponseDto(c)).ToList();
                 ServiceResponse.Message = "Coleta adicionada com sucesso";
             }
             catch (Exception ex)
@@ -53,12 +75,14 @@ namespace ColetaAPI.Service.ColetaService
             return ServiceResponse;
         }
         // Pegar todas as Coletas
-        public async Task<ServiceResponse<List<ColetaModel>>> GetColeta()
+        public async Task<ServiceResponse<List<ColetaResponseDto>>> GetColeta()
         {
-            ServiceResponse<List<ColetaModel>> ServiceResponse = new ServiceResponse<List<ColetaModel>>();
+            ServiceResponse<List<ColetaResponseDto>> ServiceResponse = new ServiceResponse<List<ColetaResponseDto>>();
             try
             {
-                ServiceResponse.Data = await _context.Coletas.Include(c => c.Localizacao).ToListAsync();
+                var coletas = await _context.Coletas.Include(c => c.Localizacao).ToListAsync();
+                ServiceResponse.Data = coletas.Select(c => MapToResponseDto(c)).ToList();
+
                 if (ServiceResponse.Data.Any())
                 {
                     ServiceResponse.Message = "Coletas encontradas";
@@ -76,21 +100,21 @@ namespace ColetaAPI.Service.ColetaService
             return ServiceResponse;
         }
         // Pegar Coleta por ID
-        public async Task<ServiceResponse<ColetaModel>> GetSingleColeta(int id)
+        public async Task<ServiceResponse<ColetaResponseDto>> GetSingleColeta(int id)
         {
-            ServiceResponse<ColetaModel> ServiceResponse = new ServiceResponse<ColetaModel>();
+            ServiceResponse<ColetaResponseDto> ServiceResponse = new ServiceResponse<ColetaResponseDto>();
             try
             {
-                ColetaModel coletas = _context.Coletas.Include(c => c.Localizacao).FirstOrDefault(c => c.ID == id);
+                ColetaModel coleta = _context.Coletas.Include(c => c.Localizacao).FirstOrDefault(c => c.ID == id);
 
-                if (coletas == null)
+                if (coleta == null)
                 {
                     ServiceResponse.Message = "Coleta não encontrada";
                     ServiceResponse.Success = false;
                 }
                 else
                 {
-                    ServiceResponse.Data = coletas;
+                    ServiceResponse.Data = MapToResponseDto(coleta);
                     ServiceResponse.Message = "Coleta encontrada";
                 }
             }
@@ -102,9 +126,9 @@ namespace ColetaAPI.Service.ColetaService
             return ServiceResponse;
         }
         // Atualizar Coleta
-        public async Task<ServiceResponse<ColetaModel>> UpdateColeta(ColetaModel coleta)
+        public async Task<ServiceResponse<ColetaResponseDto>> UpdateColeta(ColetaModel coleta)
         {
-            ServiceResponse<ColetaModel> ServiceResponse = new ServiceResponse<ColetaModel>();
+            ServiceResponse<ColetaResponseDto> ServiceResponse = new ServiceResponse<ColetaResponseDto>();
             try
             {
                 if (coleta.LocalizacaoId <= 0)
@@ -127,7 +151,13 @@ namespace ColetaAPI.Service.ColetaService
 
                 _context.Update(coleta);
                 await _context.SaveChangesAsync();
-                ServiceResponse.Data = coleta;
+
+                // Recarregar a coleta com a localização incluída
+                var coletaAtualizada = await _context.Coletas
+                    .Include(c => c.Localizacao)
+                    .FirstOrDefaultAsync(c => c.ID == coleta.ID);
+
+                ServiceResponse.Data = MapToResponseDto(coletaAtualizada);
                 ServiceResponse.Message = "Coleta atualizada com sucesso";
             }
             catch (Exception ex)
@@ -138,9 +168,9 @@ namespace ColetaAPI.Service.ColetaService
             return ServiceResponse;
         }
         // Deletar Coleta
-        public async Task<ServiceResponse<List<ColetaModel>>> DeleteColeta(int id)
+        public async Task<ServiceResponse<List<ColetaResponseDto>>> DeleteColeta(int id)
         {
-            ServiceResponse<List<ColetaModel>> ServiceResponse = new ServiceResponse<List<ColetaModel>>();
+            ServiceResponse<List<ColetaResponseDto>> ServiceResponse = new ServiceResponse<List<ColetaResponseDto>>();
             try
             {
                 ColetaModel coleta = _context.Coletas.FirstOrDefault(c => c.ID == id);
@@ -152,7 +182,9 @@ namespace ColetaAPI.Service.ColetaService
                 }
                 _context.Coletas.Remove(coleta);
                 await _context.SaveChangesAsync();
-                ServiceResponse.Data = await _context.Coletas.Include(c => c.Localizacao).ToListAsync();
+
+                var coletas = await _context.Coletas.Include(c => c.Localizacao).ToListAsync();
+                ServiceResponse.Data = coletas.Select(c => MapToResponseDto(c)).ToList();
                 ServiceResponse.Message = "Coleta deletada com sucesso";
             }
             catch (Exception ex)

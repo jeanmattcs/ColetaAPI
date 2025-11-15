@@ -8,50 +8,50 @@ namespace ColetaAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ColetaController : ControllerBase
+    public class CollectionController : ControllerBase
     {
-        private readonly IColetaInterface _coletaInterface;
-        public ColetaController(IColetaInterface coletaInterface)
+        private readonly ICollectionInterface _collectionInterface;
+        public CollectionController(ICollectionInterface collectionInterface)
         {
-            _coletaInterface = coletaInterface;
+            _collectionInterface = collectionInterface;
         }
         [HttpGet("GetAll")]
-        public async Task<ActionResult<ServiceResponse<List<ColetaResponseDto>>>> GetColeta()
+        public async Task<ActionResult<ServiceResponse<List<CollectionResponseDto>>>> GetCollection()
         {
-            return Ok(await _coletaInterface.GetColeta());
+            return Ok(await _collectionInterface.GetCollection());
         }
         [HttpGet("GetSingle/{id}")]
-        public async Task<ActionResult<ServiceResponse<ColetaResponseDto>>> GetSingleColeta(int id)
+        public async Task<ActionResult<ServiceResponse<CollectionResponseDto>>> GetSingleCollection(int id)
         {
-            return Ok(await _coletaInterface.GetSingleColeta(id));
+            return Ok(await _collectionInterface.GetSingleCollection(id));
         }
         [HttpPost("Add")]
-        public async Task<ActionResult<ServiceResponse<List<ColetaResponseDto>>>> AddColeta(CreateColetaDto dto)
+        public async Task<ActionResult<ServiceResponse<List<CollectionResponseDto>>>> AddCollection(CreateCollectionDto dto)
         {
-            var coleta = new ColetaModel
+            var collection = new CollectionModel
             {
-                LocalizacaoId = dto.LocalizacaoId,
+                LocationId = dto.LocationId,
                 OrderDate = dto.OrderDate,
                 Collected = dto.Collected
             };
-            return Ok(await _coletaInterface.AddColeta(coleta));
+            return Ok(await _collectionInterface.AddCollection(collection));
         }
         [HttpPut("Update")]
-        public async Task<ActionResult<ServiceResponse<ColetaResponseDto>>> UpdateColeta(UpdateColetaDto dto)
+        public async Task<ActionResult<ServiceResponse<CollectionResponseDto>>> UpdateCollection(UpdateCollectionDto dto)
         {
-            var coleta = new ColetaModel
+            var collection = new CollectionModel
             {
                 ID = dto.Id,
-                LocalizacaoId = dto.LocalizacaoId,
+                LocationId = dto.LocationId,
                 OrderDate = dto.OrderDate,
                 Collected = dto.Collected
             };
-            return Ok(await _coletaInterface.UpdateColeta(coleta));
+            return Ok(await _collectionInterface.UpdateCollection(collection));
         }
         [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult<ServiceResponse<List<ColetaResponseDto>>>> DeleteColeta(int id)
+        public async Task<ActionResult<ServiceResponse<List<CollectionResponseDto>>>> DeleteCollection(int id)
         {
-            return Ok(await _coletaInterface.DeleteColeta(id));
+            return Ok(await _collectionInterface.DeleteCollection(id));
         }
     }
 }

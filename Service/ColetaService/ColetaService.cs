@@ -7,65 +7,65 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ColetaAPI.Service.ColetaService
 {
-    public class ColetaService : IColetaInterface
+    public class CollectionService : ICollectionInterface
     {
         // Dependency Injection
         private readonly ApplicationsDbContext _context;
 
         // Constructor
-        public ColetaService(ApplicationsDbContext context)
+        public CollectionService(ApplicationsDbContext context)
         {
             _context = context;
         }
 
-        // Método auxiliar para mapear ColetaModel para ColetaResponseDto
-        private ColetaResponseDto MapToResponseDto(ColetaModel coleta)
+        // Helper method to map CollectionModel to CollectionResponseDto
+        private CollectionResponseDto MapToResponseDto(CollectionModel collection)
         {
-            return new ColetaResponseDto
+            return new CollectionResponseDto
             {
-                Id = coleta.ID,
-                LocalizacaoId = coleta.LocalizacaoId,
-                OrderDate = coleta.OrderDate,
-                Collected = coleta.Collected,
-                DateOfCreation = coleta.DateOfCreation,
-                Localizacao = coleta.Localizacao != null ? new LocalizacaoSimpleDto
+                Id = collection.ID,
+                LocationId = collection.LocationId,
+                OrderDate = collection.OrderDate,
+                Collected = collection.Collected,
+                DateOfCreation = collection.DateOfCreation,
+                Location = collection.Location != null ? new LocationSimpleDto
                 {
-                    Id = coleta.Localizacao.ID,
-                    Descricao = coleta.Localizacao.Descricao,
-                    DateOfCreation = coleta.Localizacao.DateOfCreation
+                    Id = collection.Location.ID,
+                    Description = collection.Location.Description,
+                    DateOfCreation = collection.Location.DateOfCreation
                 } : null
             };
         }
-        // Adicionar Coleta
-        public async Task<ServiceResponse<List<ColetaResponseDto>>> AddColeta(ColetaModel coleta)
+        // Add Collection
+        public async Task<ServiceResponse<List<CollectionResponseDto>>> AddCollection(CollectionModel collection)
         {
-            ServiceResponse<List<ColetaResponseDto>> ServiceResponse = new ServiceResponse<List<ColetaResponseDto>>();
+            ServiceResponse<List<CollectionResponseDto>> ServiceResponse = new ServiceResponse<List<CollectionResponseDto>>();
             try
             {
-                if (coleta.LocalizacaoId <= 0)
+                if (collection.LocationId <= 0)
                 {
                     ServiceResponse.Data = null;
-                    ServiceResponse.Message = "LocalizacaoId é obrigatório e deve ser válido";
+                    ServiceResponse.Message = "LocationId is required and must be valid";
                     ServiceResponse.Success = false;
                     return ServiceResponse;
                 }
 
-                // Validar se a localização existe
-                var localizacaoExiste = await _context.Localizacoes.AnyAsync(l => l.ID == coleta.LocalizacaoId);
-                if (!localizacaoExiste)
+                // Validate if the location exists
+                var locationExists = await _context.Locations.AnyAsync(l => l.ID == collection.LocationId);
+                if (!locationExists)
                 {
                     ServiceResponse.Data = null;
-                    ServiceResponse.Message = $"Localização com ID {coleta.LocalizacaoId} não existe";
+                    ServiceResponse.Message = $"Location with ID {collection.LocationId} does not exist";
                     ServiceResponse.Success = false;
                     return ServiceResponse;
                 }
 
-                _context.Add(coleta);
+                _context.Add(collection);
                 await _context.SaveChangesAsync();
 
-                var coletas = await _context.Coletas.Include(c => c.Localizacao).ToListAsync();
-                ServiceResponse.Data = coletas.Select(c => MapToResponseDto(c)).ToList();
-                ServiceResponse.Message = "Coleta adicionada com sucesso";
+                var collections = await _context.Collections.Include(c => c.Location).ToListAsync();
+                ServiceResponse.Data = collections.Select(c => MapToResponseDto(c)).ToList();
+                ServiceResponse.Message = "Collection added successfully";
             }
             catch (Exception ex)
             {
@@ -74,22 +74,22 @@ namespace ColetaAPI.Service.ColetaService
             }
             return ServiceResponse;
         }
-        // Pegar todas as Coletas
-        public async Task<ServiceResponse<List<ColetaResponseDto>>> GetColeta()
+        // Get all Collections
+        public async Task<ServiceResponse<List<CollectionResponseDto>>> GetCollection()
         {
-            ServiceResponse<List<ColetaResponseDto>> ServiceResponse = new ServiceResponse<List<ColetaResponseDto>>();
+            ServiceResponse<List<CollectionResponseDto>> ServiceResponse = new ServiceResponse<List<CollectionResponseDto>>();
             try
             {
-                var coletas = await _context.Coletas.Include(c => c.Localizacao).ToListAsync();
-                ServiceResponse.Data = coletas.Select(c => MapToResponseDto(c)).ToList();
+                var collections = await _context.Collections.Include(c => c.Location).ToListAsync();
+                ServiceResponse.Data = collections.Select(c => MapToResponseDto(c)).ToList();
 
                 if (ServiceResponse.Data.Any())
                 {
-                    ServiceResponse.Message = "Coletas encontradas";
+                    ServiceResponse.Message = "Collections found";
                 }
                 else
                 {
-                    ServiceResponse.Message = "Nenhum dado encontrado";
+                    ServiceResponse.Message = "No data found";
                 }
             }
             catch (Exception ex)
@@ -99,23 +99,23 @@ namespace ColetaAPI.Service.ColetaService
             }
             return ServiceResponse;
         }
-        // Pegar Coleta por ID
-        public async Task<ServiceResponse<ColetaResponseDto>> GetSingleColeta(int id)
+        // Get Collection by ID
+        public async Task<ServiceResponse<CollectionResponseDto>> GetSingleCollection(int id)
         {
-            ServiceResponse<ColetaResponseDto> ServiceResponse = new ServiceResponse<ColetaResponseDto>();
+            ServiceResponse<CollectionResponseDto> ServiceResponse = new ServiceResponse<CollectionResponseDto>();
             try
             {
-                ColetaModel coleta = _context.Coletas.Include(c => c.Localizacao).FirstOrDefault(c => c.ID == id);
+                CollectionModel collection = _context.Collections.Include(c => c.Location).FirstOrDefault(c => c.ID == id);
 
-                if (coleta == null)
+                if (collection == null)
                 {
-                    ServiceResponse.Message = "Coleta não encontrada";
+                    ServiceResponse.Message = "Collection not found";
                     ServiceResponse.Success = false;
                 }
                 else
                 {
-                    ServiceResponse.Data = MapToResponseDto(coleta);
-                    ServiceResponse.Message = "Coleta encontrada";
+                    ServiceResponse.Data = MapToResponseDto(collection);
+                    ServiceResponse.Message = "Collection found";
                 }
             }
             catch (Exception ex)
@@ -125,40 +125,40 @@ namespace ColetaAPI.Service.ColetaService
             }
             return ServiceResponse;
         }
-        // Atualizar Coleta
-        public async Task<ServiceResponse<ColetaResponseDto>> UpdateColeta(ColetaModel coleta)
+        // Update Collection
+        public async Task<ServiceResponse<CollectionResponseDto>> UpdateCollection(CollectionModel collection)
         {
-            ServiceResponse<ColetaResponseDto> ServiceResponse = new ServiceResponse<ColetaResponseDto>();
+            ServiceResponse<CollectionResponseDto> ServiceResponse = new ServiceResponse<CollectionResponseDto>();
             try
             {
-                if (coleta.LocalizacaoId <= 0)
+                if (collection.LocationId <= 0)
                 {
                     ServiceResponse.Data = null;
-                    ServiceResponse.Message = "LocalizacaoId é obrigatório e deve ser válido";
+                    ServiceResponse.Message = "LocationId is required and must be valid";
                     ServiceResponse.Success = false;
                     return ServiceResponse;
                 }
 
-                // Validar se a localização existe
-                var localizacaoExiste = await _context.Localizacoes.AnyAsync(l => l.ID == coleta.LocalizacaoId);
-                if (!localizacaoExiste)
+                // Validate if the location exists
+                var locationExists = await _context.Locations.AnyAsync(l => l.ID == collection.LocationId);
+                if (!locationExists)
                 {
                     ServiceResponse.Data = null;
-                    ServiceResponse.Message = $"Localização com ID {coleta.LocalizacaoId} não existe";
+                    ServiceResponse.Message = $"Location with ID {collection.LocationId} does not exist";
                     ServiceResponse.Success = false;
                     return ServiceResponse;
                 }
 
-                _context.Update(coleta);
+                _context.Update(collection);
                 await _context.SaveChangesAsync();
 
-                // Recarregar a coleta com a localização incluída
-                var coletaAtualizada = await _context.Coletas
-                    .Include(c => c.Localizacao)
-                    .FirstOrDefaultAsync(c => c.ID == coleta.ID);
+                // Reload the collection with the location included
+                var updatedCollection = await _context.Collections
+                    .Include(c => c.Location)
+                    .FirstOrDefaultAsync(c => c.ID == collection.ID);
 
-                ServiceResponse.Data = MapToResponseDto(coletaAtualizada);
-                ServiceResponse.Message = "Coleta atualizada com sucesso";
+                ServiceResponse.Data = MapToResponseDto(updatedCollection);
+                ServiceResponse.Message = "Collection updated successfully";
             }
             catch (Exception ex)
             {
@@ -167,25 +167,25 @@ namespace ColetaAPI.Service.ColetaService
             }
             return ServiceResponse;
         }
-        // Deletar Coleta
-        public async Task<ServiceResponse<List<ColetaResponseDto>>> DeleteColeta(int id)
+        // Delete Collection
+        public async Task<ServiceResponse<List<CollectionResponseDto>>> DeleteCollection(int id)
         {
-            ServiceResponse<List<ColetaResponseDto>> ServiceResponse = new ServiceResponse<List<ColetaResponseDto>>();
+            ServiceResponse<List<CollectionResponseDto>> ServiceResponse = new ServiceResponse<List<CollectionResponseDto>>();
             try
             {
-                ColetaModel coleta = _context.Coletas.FirstOrDefault(c => c.ID == id);
-                if (coleta == null)
+                CollectionModel collection = _context.Collections.FirstOrDefault(c => c.ID == id);
+                if (collection == null)
                 {
-                    ServiceResponse.Message = "Coleta não encontrada";
+                    ServiceResponse.Message = "Collection not found";
                     ServiceResponse.Success = false;
                     return ServiceResponse;
                 }
-                _context.Coletas.Remove(coleta);
+                _context.Collections.Remove(collection);
                 await _context.SaveChangesAsync();
 
-                var coletas = await _context.Coletas.Include(c => c.Localizacao).ToListAsync();
-                ServiceResponse.Data = coletas.Select(c => MapToResponseDto(c)).ToList();
-                ServiceResponse.Message = "Coleta deletada com sucesso";
+                var collections = await _context.Collections.Include(c => c.Location).ToListAsync();
+                ServiceResponse.Data = collections.Select(c => MapToResponseDto(c)).ToList();
+                ServiceResponse.Message = "Collection deleted successfully";
             }
             catch (Exception ex)
             {

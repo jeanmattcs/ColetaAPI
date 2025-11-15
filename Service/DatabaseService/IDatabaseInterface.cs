@@ -5,7 +5,7 @@ namespace ColetaAPI.Service.DatabaseService
 {
     public interface IDatabaseInterface
     {
-        // Pegar todos os dados do banco de dados
+        // Get all data from the database
         Task<ServiceResponse<DatabaseDto>> GetAllData();
     }
 }

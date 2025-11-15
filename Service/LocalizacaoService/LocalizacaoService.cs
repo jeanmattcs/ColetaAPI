@@ -5,55 +5,55 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ColetaAPI.Service.LocalizacaoService
 {
-    public class LocalizacaoService : ILocalizacaoInterface
+    public class LocationService : ILocationInterface
     {
         // Dependency Injection
         private readonly ApplicationsDbContext _context;
 
         // Constructor
-        public LocalizacaoService(ApplicationsDbContext context)
+        public LocationService(ApplicationsDbContext context)
         {
             _context = context;
         }
 
-        // Método auxiliar para mapear LocalizacaoModel para LocalizacaoResponseDto
-        private LocalizacaoResponseDto MapToResponseDto(LocalizacaoModel localizacao)
+        // Helper method to map LocationModel to LocationResponseDto
+        private LocationResponseDto MapToResponseDto(LocationModel location)
         {
-            return new LocalizacaoResponseDto
+            return new LocationResponseDto
             {
-                Id = localizacao.ID,
-                Descricao = localizacao.Descricao,
-                DateOfCreation = localizacao.DateOfCreation,
-                Coletas = localizacao.Coletas?.Select(c => new ColetaSimpleDto
+                Id = location.ID,
+                Description = location.Description,
+                DateOfCreation = location.DateOfCreation,
+                Collections = location.Collections?.Select(c => new CollectionSimpleDto
                 {
                     Id = c.ID,
                     OrderDate = c.OrderDate,
                     Collected = c.Collected,
                     DateOfCreation = c.DateOfCreation
-                }).ToList() ?? new List<ColetaSimpleDto>()
+                }).ToList() ?? new List<CollectionSimpleDto>()
             };
         }
 
-        // Adicionar Localização
-        public async Task<ServiceResponse<List<LocalizacaoResponseDto>>> AddLocalizacao(LocalizacaoModel localizacao)
+        // Add Location
+        public async Task<ServiceResponse<List<LocationResponseDto>>> AddLocation(LocationModel location)
         {
-            ServiceResponse<List<LocalizacaoResponseDto>> serviceResponse = new ServiceResponse<List<LocalizacaoResponseDto>>();
+            ServiceResponse<List<LocationResponseDto>> serviceResponse = new ServiceResponse<List<LocationResponseDto>>();
             try
             {
-                if (string.IsNullOrWhiteSpace(localizacao.Descricao))
+                if (string.IsNullOrWhiteSpace(location.Description))
                 {
                     serviceResponse.Data = null;
-                    serviceResponse.Message = "Descrição é obrigatória";
+                    serviceResponse.Message = "Description is required";
                     serviceResponse.Success = false;
                     return serviceResponse;
                 }
 
-                _context.Add(localizacao);
+                _context.Add(location);
                 await _context.SaveChangesAsync();
 
-                var localizacoes = await _context.Localizacoes.Include(l => l.Coletas).ToListAsync();
-                serviceResponse.Data = localizacoes.Select(l => MapToResponseDto(l)).ToList();
-                serviceResponse.Message = "Localização adicionada com sucesso";
+                var locations = await _context.Locations.Include(l => l.Collections).ToListAsync();
+                serviceResponse.Data = locations.Select(l => MapToResponseDto(l)).ToList();
+                serviceResponse.Message = "Location added successfully";
             }
             catch (Exception ex)
             {
@@ -63,25 +63,25 @@ namespace ColetaAPI.Service.LocalizacaoService
             return serviceResponse;
         }
 
-        // Pegar todas as Localizações
-        public async Task<ServiceResponse<List<LocalizacaoResponseDto>>> GetLocalizacoes()
+        // Get all Locations
+        public async Task<ServiceResponse<List<LocationResponseDto>>> GetLocations()
         {
-            ServiceResponse<List<LocalizacaoResponseDto>> serviceResponse = new ServiceResponse<List<LocalizacaoResponseDto>>();
+            ServiceResponse<List<LocationResponseDto>> serviceResponse = new ServiceResponse<List<LocationResponseDto>>();
             try
             {
-                var localizacoes = await _context.Localizacoes
-                    .Include(l => l.Coletas)
+                var locations = await _context.Locations
+                    .Include(l => l.Collections)
                     .ToListAsync();
 
-                serviceResponse.Data = localizacoes.Select(l => MapToResponseDto(l)).ToList();
+                serviceResponse.Data = locations.Select(l => MapToResponseDto(l)).ToList();
 
                 if (serviceResponse.Data.Any())
                 {
-                    serviceResponse.Message = "Localizações encontradas";
+                    serviceResponse.Message = "Locations found";
                 }
                 else
                 {
-                    serviceResponse.Message = "Nenhuma localização encontrada";
+                    serviceResponse.Message = "No locations found";
                 }
             }
             catch (Exception ex)
@@ -92,25 +92,25 @@ namespace ColetaAPI.Service.LocalizacaoService
             return serviceResponse;
         }
 
-        // Pegar Localização por ID
-        public async Task<ServiceResponse<LocalizacaoResponseDto>> GetLocalizacaoById(int id)
+        // Get Location by ID
+        public async Task<ServiceResponse<LocationResponseDto>> GetLocationById(int id)
         {
-            ServiceResponse<LocalizacaoResponseDto> serviceResponse = new ServiceResponse<LocalizacaoResponseDto>();
+            ServiceResponse<LocationResponseDto> serviceResponse = new ServiceResponse<LocationResponseDto>();
             try
             {
-                LocalizacaoModel localizacao = await _context.Localizacoes
-                    .Include(l => l.Coletas)
+                LocationModel location = await _context.Locations
+                    .Include(l => l.Collections)
                     .FirstOrDefaultAsync(l => l.ID == id);
 
-                if (localizacao == null)
+                if (location == null)
                 {
-                    serviceResponse.Message = "Localização não encontrada";
+                    serviceResponse.Message = "Location not found";
                     serviceResponse.Success = false;
                 }
                 else
                 {
-                    serviceResponse.Data = MapToResponseDto(localizacao);
-                    serviceResponse.Message = "Localização encontrada";
+                    serviceResponse.Data = MapToResponseDto(location);
+                    serviceResponse.Message = "Location found";
                 }
             }
             catch (Exception ex)
@@ -121,30 +121,30 @@ namespace ColetaAPI.Service.LocalizacaoService
             return serviceResponse;
         }
 
-        // Atualizar Localização
-        public async Task<ServiceResponse<LocalizacaoResponseDto>> UpdateLocalizacao(LocalizacaoModel localizacao)
+        // Update Location
+        public async Task<ServiceResponse<LocationResponseDto>> UpdateLocation(LocationModel location)
         {
-            ServiceResponse<LocalizacaoResponseDto> serviceResponse = new ServiceResponse<LocalizacaoResponseDto>();
+            ServiceResponse<LocationResponseDto> serviceResponse = new ServiceResponse<LocationResponseDto>();
             try
             {
-                if (string.IsNullOrWhiteSpace(localizacao.Descricao))
+                if (string.IsNullOrWhiteSpace(location.Description))
                 {
                     serviceResponse.Data = null;
-                    serviceResponse.Message = "Descrição é obrigatória";
+                    serviceResponse.Message = "Description is required";
                     serviceResponse.Success = false;
                     return serviceResponse;
                 }
 
-                _context.Update(localizacao);
+                _context.Update(location);
                 await _context.SaveChangesAsync();
 
-                // Recarregar a localização com as coletas incluídas
-                var localizacaoAtualizada = await _context.Localizacoes
-                    .Include(l => l.Coletas)
-                    .FirstOrDefaultAsync(l => l.ID == localizacao.ID);
+                // Reload the location with the collections included
+                var updatedLocation = await _context.Locations
+                    .Include(l => l.Collections)
+                    .FirstOrDefaultAsync(l => l.ID == location.ID);
 
-                serviceResponse.Data = MapToResponseDto(localizacaoAtualizada);
-                serviceResponse.Message = "Localização atualizada com sucesso";
+                serviceResponse.Data = MapToResponseDto(updatedLocation);
+                serviceResponse.Message = "Location updated successfully";
             }
             catch (Exception ex)
             {
@@ -154,26 +154,26 @@ namespace ColetaAPI.Service.LocalizacaoService
             return serviceResponse;
         }
 
-        // Deletar Localização
-        public async Task<ServiceResponse<List<LocalizacaoResponseDto>>> DeleteLocalizacao(int id)
+        // Delete Location
+        public async Task<ServiceResponse<List<LocationResponseDto>>> DeleteLocation(int id)
         {
-            ServiceResponse<List<LocalizacaoResponseDto>> serviceResponse = new ServiceResponse<List<LocalizacaoResponseDto>>();
+            ServiceResponse<List<LocationResponseDto>> serviceResponse = new ServiceResponse<List<LocationResponseDto>>();
             try
             {
-                LocalizacaoModel localizacao = _context.Localizacoes.FirstOrDefault(l => l.ID == id);
-                if (localizacao == null)
+                LocationModel location = _context.Locations.FirstOrDefault(l => l.ID == id);
+                if (location == null)
                 {
-                    serviceResponse.Message = "Localização não encontrada";
+                    serviceResponse.Message = "Location not found";
                     serviceResponse.Success = false;
                     return serviceResponse;
                 }
 
-                _context.Localizacoes.Remove(localizacao);
+                _context.Locations.Remove(location);
                 await _context.SaveChangesAsync();
 
-                var localizacoes = await _context.Localizacoes.Include(l => l.Coletas).ToListAsync();
-                serviceResponse.Data = localizacoes.Select(l => MapToResponseDto(l)).ToList();
-                serviceResponse.Message = "Localização deletada com sucesso";
+                var locations = await _context.Locations.Include(l => l.Collections).ToListAsync();
+                serviceResponse.Data = locations.Select(l => MapToResponseDto(l)).ToList();
+                serviceResponse.Message = "Location deleted successfully";
             }
             catch (Exception ex)
             {

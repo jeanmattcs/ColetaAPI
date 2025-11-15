@@ -2,45 +2,45 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ColetaAPI.DTOs
 {
-    public class CreateColetaDto
+    public class CreateCollectionDto
     {
-        [Required(ErrorMessage = "LocalizacaoId é obrigatório")]
-        public int LocalizacaoId { get; set; }
+        [Required(ErrorMessage = "LocationId is required")]
+        public int LocationId { get; set; }
 
-        [Required(ErrorMessage = "OrderDate é obrigatório")]
+        [Required(ErrorMessage = "OrderDate is required")]
         public DateTime OrderDate { get; set; }
 
         public bool Collected { get; set; } = false;
     }
 
-    public class UpdateColetaDto
+    public class UpdateCollectionDto
     {
-        [Required(ErrorMessage = "ID é obrigatório")]
+        [Required(ErrorMessage = "ID is required")]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "LocalizacaoId é obrigatório")]
-        public int LocalizacaoId { get; set; }
+        [Required(ErrorMessage = "LocationId is required")]
+        public int LocationId { get; set; }
 
-        [Required(ErrorMessage = "OrderDate é obrigatório")]
+        [Required(ErrorMessage = "OrderDate is required")]
         public DateTime OrderDate { get; set; }
 
         public bool Collected { get; set; }
     }
 
-    public class ColetaResponseDto
+    public class CollectionResponseDto
     {
         public int Id { get; set; }
-        public int LocalizacaoId { get; set; }
+        public int LocationId { get; set; }
         public DateTime OrderDate { get; set; }
         public bool Collected { get; set; }
         public DateTime DateOfCreation { get; set; }
-        public LocalizacaoSimpleDto? Localizacao { get; set; }
+        public LocationSimpleDto? Location { get; set; }
     }
 
-    public class LocalizacaoSimpleDto
+    public class LocationSimpleDto
     {
         public int Id { get; set; }
-        public string Descricao { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public DateTime DateOfCreation { get; set; }
     }
 }

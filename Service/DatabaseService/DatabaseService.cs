@@ -16,7 +16,7 @@ namespace ColetaAPI.Service.DatabaseService
             _context = context;
         }
 
-        // Pegar todos os dados do banco de dados
+        // Get all data from the database
         public async Task<ServiceResponse<DatabaseDto>> GetAllData()
         {
             ServiceResponse<DatabaseDto> serviceResponse = new ServiceResponse<DatabaseDto>();
@@ -24,23 +24,23 @@ namespace ColetaAPI.Service.DatabaseService
             {
                 var databaseDto = new DatabaseDto
                 {
-                    Localizacoes = await _context.Localizacoes
-                        .Include(l => l.Coletas)
+                    Locations = await _context.Locations
+                        .Include(l => l.Collections)
                         .ToListAsync(),
-                    Coletas = await _context.Coletas
-                        .Include(c => c.Localizacao)
+                    Collections = await _context.Collections
+                        .Include(c => c.Location)
                         .ToListAsync()
                 };
 
                 serviceResponse.Data = databaseDto;
-                
-                if (databaseDto.Localizacoes.Any() || databaseDto.Coletas.Any())
+
+                if (databaseDto.Locations.Any() || databaseDto.Collections.Any())
                 {
-                    serviceResponse.Message = $"Dados encontrados: {databaseDto.Localizacoes.Count} localizações e {databaseDto.Coletas.Count} coletas";
+                    serviceResponse.Message = $"Data found: {databaseDto.Locations.Count} locations and {databaseDto.Collections.Count} collections";
                 }
                 else
                 {
-                    serviceResponse.Message = "Nenhum dado encontrado no banco de dados";
+                    serviceResponse.Message = "No data found in the database";
                 }
             }
             catch (Exception ex)

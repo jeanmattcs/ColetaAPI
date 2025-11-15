@@ -3,13 +3,13 @@ using ColetaAPI.Models;
 
 namespace ColetaAPI.Service.ColetaService
 {
-    public interface IColetaInterface
+    public interface ICollectionInterface
     {
-        // Pegar todas as Coletas
-        Task<ServiceResponse<List<ColetaResponseDto>>> GetColeta();
-        Task<ServiceResponse<ColetaResponseDto>> GetSingleColeta(int id);
-        Task<ServiceResponse<List<ColetaResponseDto>>> AddColeta(ColetaModel coleta);
-        Task<ServiceResponse<ColetaResponseDto>> UpdateColeta(ColetaModel coleta);
-        Task<ServiceResponse<List<ColetaResponseDto>>> DeleteColeta(int id);
+        // Get all Collections
+        Task<ServiceResponse<List<CollectionResponseDto>>> GetCollection();
+        Task<ServiceResponse<CollectionResponseDto>> GetSingleCollection(int id);
+        Task<ServiceResponse<List<CollectionResponseDto>>> AddCollection(CollectionModel collection);
+        Task<ServiceResponse<CollectionResponseDto>> UpdateCollection(CollectionModel collection);
+        Task<ServiceResponse<List<CollectionResponseDto>>> DeleteCollection(int id);
     }
 }

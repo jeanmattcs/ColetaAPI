@@ -8,52 +8,52 @@ namespace ColetaAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LocalizacaoController : ControllerBase
+    public class LocationController : ControllerBase
     {
-        private readonly ILocalizacaoInterface _localizacaoInterface;
+        private readonly ILocationInterface _locationInterface;
 
-        public LocalizacaoController(ILocalizacaoInterface localizacaoInterface)
+        public LocationController(ILocationInterface locationInterface)
         {
-            _localizacaoInterface = localizacaoInterface;
+            _locationInterface = locationInterface;
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<ServiceResponse<List<LocalizacaoResponseDto>>>> GetLocalizacoes()
+        public async Task<ActionResult<ServiceResponse<List<LocationResponseDto>>>> GetLocations()
         {
-            return Ok(await _localizacaoInterface.GetLocalizacoes());
+            return Ok(await _locationInterface.GetLocations());
         }
 
         [HttpGet("GetById/{id}")]
-        public async Task<ActionResult<ServiceResponse<LocalizacaoResponseDto>>> GetLocalizacaoById(int id)
+        public async Task<ActionResult<ServiceResponse<LocationResponseDto>>> GetLocationById(int id)
         {
-            return Ok(await _localizacaoInterface.GetLocalizacaoById(id));
+            return Ok(await _locationInterface.GetLocationById(id));
         }
 
         [HttpPost("Add")]
-        public async Task<ActionResult<ServiceResponse<List<LocalizacaoResponseDto>>>> AddLocalizacao(CreateLocalizacaoDto dto)
+        public async Task<ActionResult<ServiceResponse<List<LocationResponseDto>>>> AddLocation(CreateLocationDto dto)
         {
-            var localizacao = new LocalizacaoModel
+            var location = new LocationModel
             {
-                Descricao = dto.Descricao
+                Description = dto.Description
             };
-            return Ok(await _localizacaoInterface.AddLocalizacao(localizacao));
+            return Ok(await _locationInterface.AddLocation(location));
         }
 
         [HttpPut("Update")]
-        public async Task<ActionResult<ServiceResponse<LocalizacaoResponseDto>>> UpdateLocalizacao(UpdateLocalizacaoDto dto)
+        public async Task<ActionResult<ServiceResponse<LocationResponseDto>>> UpdateLocation(UpdateLocationDto dto)
         {
-            var localizacao = new LocalizacaoModel
+            var location = new LocationModel
             {
                 ID = dto.Id,
-                Descricao = dto.Descricao
+                Description = dto.Description
             };
-            return Ok(await _localizacaoInterface.UpdateLocalizacao(localizacao));
+            return Ok(await _locationInterface.UpdateLocation(location));
         }
 
         [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult<ServiceResponse<List<LocalizacaoResponseDto>>>> DeleteLocalizacao(int id)
+        public async Task<ActionResult<ServiceResponse<List<LocationResponseDto>>>> DeleteLocation(int id)
         {
-            return Ok(await _localizacaoInterface.DeleteLocalizacao(id));
+            return Ok(await _locationInterface.DeleteLocation(id));
         }
     }
 }

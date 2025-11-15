@@ -21,8 +21,8 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IColetaInterface, ColetaService>();
-builder.Services.AddScoped<ILocalizacaoInterface, LocalizacaoService>();
+builder.Services.AddScoped<ICollectionInterface, CollectionService>();
+builder.Services.AddScoped<ILocationInterface, LocationService>();
 builder.Services.AddScoped<IDatabaseInterface, DatabaseService>();
 
 // Conexao com o SQL Server.

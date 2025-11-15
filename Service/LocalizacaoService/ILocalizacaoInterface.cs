@@ -3,22 +3,22 @@ using ColetaAPI.Models;
 
 namespace ColetaAPI.Service.LocalizacaoService
 {
-    public interface ILocalizacaoInterface
+    public interface ILocationInterface
     {
-        // Pegar todas as Localizações
-        Task<ServiceResponse<List<LocalizacaoResponseDto>>> GetLocalizacoes();
+        // Get all Locations
+        Task<ServiceResponse<List<LocationResponseDto>>> GetLocations();
 
-        // Pegar Localização por ID
-        Task<ServiceResponse<LocalizacaoResponseDto>> GetLocalizacaoById(int id);
+        // Get Location by ID
+        Task<ServiceResponse<LocationResponseDto>> GetLocationById(int id);
 
-        // Adicionar Localização
-        Task<ServiceResponse<List<LocalizacaoResponseDto>>> AddLocalizacao(LocalizacaoModel localizacao);
+        // Add Location
+        Task<ServiceResponse<List<LocationResponseDto>>> AddLocation(LocationModel location);
 
-        // Atualizar Localização
-        Task<ServiceResponse<LocalizacaoResponseDto>> UpdateLocalizacao(LocalizacaoModel localizacao);
+        // Update Location
+        Task<ServiceResponse<LocationResponseDto>> UpdateLocation(LocationModel location);
 
-        // Deletar Localização
-        Task<ServiceResponse<List<LocalizacaoResponseDto>>> DeleteLocalizacao(int id);
+        // Delete Location
+        Task<ServiceResponse<List<LocationResponseDto>>> DeleteLocation(int id);
     }
 }
 

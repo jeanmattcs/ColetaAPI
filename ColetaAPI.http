@@ -1,59 +1,59 @@
 @ColetaAPI_HostAddress = https://localhost:7116
 
-### BUSCAR TODOS OS DADOS DO BANCO DE DADOS (LOCALIZAÇÕES + COLETAS)
+### GET ALL DATABASE DATA (LOCATIONS + COLLECTIONS)
 GET {{ColetaAPI_HostAddress}}/api/Database/GetAll
 Accept: application/json
 
 ###
 
-POST {{ColetaAPI_HostAddress}}/api/Localizacao/Add
+POST {{ColetaAPI_HostAddress}}/api/Location/Add
 Content-Type: application/json
 
 {
-  "descricao": "Rua dos guardas chuvas"
+  "description": "Umbrella Street"
 }
 
-GET {{ColetaAPI_HostAddress}}/api/Localizacao/GetAll
+GET {{ColetaAPI_HostAddress}}/api/Location/GetAll
 Accept: application/json
 
-GET {{ColetaAPI_HostAddress}}/api/Localizacao/GetById/1
+GET {{ColetaAPI_HostAddress}}/api/Location/GetById/1
 Accept: application/json
 
-PUT {{ColetaAPI_HostAddress}}/api/Localizacao/Update
+PUT {{ColetaAPI_HostAddress}}/api/Location/Update
 Content-Type: application/json
 
 {
   "id": 1,
-  "descricao": "Rua dos guarda chuva"
+  "description": "Umbrella Avenue"
 }
 
-DELETE {{ColetaAPI_HostAddress}}/api/Localizacao/Delete/1
+DELETE {{ColetaAPI_HostAddress}}/api/Location/Delete/1
 Accept: application/json
 
-POST {{ColetaAPI_HostAddress}}/api/Coleta/Add
+POST {{ColetaAPI_HostAddress}}/api/Collection/Add
 Content-Type: application/json
 
 {
-  "localizacaoId": 1,
+  "locationId": 1,
   "orderDate": "2025-10-26T10:30:00",
   "collected": false
 }
 
-GET {{ColetaAPI_HostAddress}}/api/Coleta/GetAll
+GET {{ColetaAPI_HostAddress}}/api/Collection/GetAll
 Accept: application/json
 
-GET {{ColetaAPI_HostAddress}}/api/Coleta/GetSingle/1
+GET {{ColetaAPI_HostAddress}}/api/Collection/GetSingle/1
 Accept: application/json
 
-PUT {{ColetaAPI_HostAddress}}/api/Coleta/Update
+PUT {{ColetaAPI_HostAddress}}/api/Collection/Update
 Content-Type: application/json
 
 {
   "id": 1,
-  "localizacaoId": 1,
+  "locationId": 1,
   "orderDate": "2025-10-26T10:30:00",
   "collected": true
 }
 
-DELETE {{ColetaAPI_HostAddress}}/api/Coleta/Delete/1
+DELETE {{ColetaAPI_HostAddress}}/api/Collection/Delete/1
 Accept: application/json

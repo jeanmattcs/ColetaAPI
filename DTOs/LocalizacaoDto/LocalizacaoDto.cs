@@ -2,31 +2,31 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ColetaAPI.DTOs
 {
-    public class CreateLocalizacaoDto
+    public class CreateLocationDto
     {
-        [Required(ErrorMessage = "Descrição é obrigatória")]
-        [StringLength(255, ErrorMessage = "Descrição não pode ter mais de 255 caracteres")]
-        public string Descricao { get; set; }
+        [Required(ErrorMessage = "Description is required")]
+        [StringLength(255, ErrorMessage = "Description cannot exceed 255 characters")]
+        public string Description { get; set; }
     }
 
-    public class UpdateLocalizacaoDto
+    public class UpdateLocationDto
     {
-        [Required(ErrorMessage = "ID é obrigatório")]
+        [Required(ErrorMessage = "ID is required")]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Descrição é obrigatória")]
-        [StringLength(255, ErrorMessage = "Descrição não pode ter mais de 255 caracteres")]
-        public string Descricao { get; set; }
+        [Required(ErrorMessage = "Description is required")]
+        [StringLength(255, ErrorMessage = "Description cannot exceed 255 characters")]
+        public string Description { get; set; }
     }
-    public class LocalizacaoResponseDto
+    public class LocationResponseDto
     {
         public int Id { get; set; }
-        public string Descricao { get; set; }
+        public string Description { get; set; }
         public DateTime DateOfCreation { get; set; }
-        public List<ColetaSimpleDto> Coletas { get; set; } = new List<ColetaSimpleDto>();
+        public List<CollectionSimpleDto> Collections { get; set; } = new List<CollectionSimpleDto>();
     }
 
-    public class ColetaSimpleDto
+    public class CollectionSimpleDto
     {
         public int Id { get; set; }
         public DateTime OrderDate { get; set; }
